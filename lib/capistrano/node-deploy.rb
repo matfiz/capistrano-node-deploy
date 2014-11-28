@@ -108,7 +108,7 @@ EOD
   namespace :deploy do
     task :create_release_dir, :except => {:no_release => true} do
       mkdir_releases = "mkdir -p #{fetch :releases_path}"
-      mkdir_commands = ["log", "pids", "node_modules"].map {|dir| "mkdir -p #{shared_path}/#{dir} && ln -s -f #{shared_dir}/#{dir} #{release_dir}/#{dir}"}
+      mkdir_commands = ["log", "pids", "node_modules"].map {|dir| "mkdir -p #{shared_path}/#{dir} && ln -s -f #{shared_path}/#{dir} #{release_path}/#{dir}"}
       run mkdir_commands.unshift(mkdir_releases).join(" && ")
     end
   end
