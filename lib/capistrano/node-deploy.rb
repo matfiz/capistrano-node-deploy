@@ -26,7 +26,6 @@ end
 Capistrano::Configuration.instance(:must_exist).load do |configuration|
   default_run_options[:pty] = true
   before "deploy", "deploy:create_release_dir"
-  before "deploy", "node:check_upstart_config"
   before "deploy:create_symlink", "node:install_packages"
   after "deploy:update", "node:restart"
   after "deploy:rollback", "node:restart"
@@ -80,7 +79,6 @@ EOD
 
     desc "Create upstart script for this node app"
     task :create_upstart_config do
-      return unless run_method == 'upstart'
       temp_config_file_path = "#{shared_path}/#{application}.conf"
 
       # Generate and upload the upstart script
@@ -110,7 +108,7 @@ EOD
   namespace :deploy do
     task :create_release_dir, :except => {:no_release => true} do
       mkdir_releases = "mkdir -p #{fetch :releases_path}"
-      mkdir_commands = ["log", "pids"].map {|dir| "mkdir -p #{shared_path}/#{dir}"}
+      mkdir_commands = ["log", "pids", "node_modules"].map {|dir| "mkdir -p #{shared_path}/#{dir} && ln -s -f #{shared_dir}/#{dir} #{release_dir}/#{dir}"}
       run mkdir_commands.unshift(mkdir_releases).join(" && ")
     end
   end
