@@ -37,7 +37,7 @@ Capistrano::Configuration.instance(:must_exist).load do |configuration|
   set :app_command, package_json["main"] || "index.js" unless defined? app_command
   set :app_environment, "" unless defined? app_environment
 
-  set :node_binary, "/usr/bin/node" unless defined? node_binary
+  set :node_binary, "/usr/bin/coffee" unless defined? node_binary
   set :node_env, "production" unless defined? node_env
   set :node_user, "deploy" unless defined? node_user
   set :kill_timeout, 5 unless defined? kill_timeout
@@ -80,6 +80,7 @@ EOD
 
     desc "Create upstart script for this node app"
     task :create_upstart_config do
+      return unless run_method == 'upstart'
       temp_config_file_path = "#{shared_path}/#{application}.conf"
 
       # Generate and upload the upstart script
