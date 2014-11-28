@@ -69,7 +69,8 @@ EOD
   namespace :node do
     desc "Check required packages and install if packages are not installed"
     task :install_packages do
-      run "mkdir -p #{previous_release}/node_modules ; cp -r #{previous_release}/node_modules #{release_path}" if previous_release
+      #run "mkdir -p #{previous_release}/node_modules ; cp -r #{previous_release}/node_modules #{release_path}" if previous_release
+      run "ln -s -f #{shared_path}/node_modules #{release_path}/node_modules"
       run "cd #{release_path} && npm install --loglevel warn"
     end
 
@@ -108,7 +109,7 @@ EOD
   namespace :deploy do
     task :create_release_dir, :except => {:no_release => true} do
       mkdir_releases = "mkdir -p #{fetch :releases_path}"
-      mkdir_commands = ["log", "pids", "node_modules"].map {|dir| "mkdir -p #{shared_path}/#{dir} && ln -s -f #{shared_path}/#{dir} #{release_path}/#{dir}"}
+      mkdir_commands = ["log", "pids", "node_modules"].map {|dir| "mkdir -p #{shared_path}/#{dir}"}
       run mkdir_commands.unshift(mkdir_releases).join(" && ")
     end
   end
